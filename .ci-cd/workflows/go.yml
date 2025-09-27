@@ -1,32 +1,41 @@
+name: Go CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.22'
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
 
-      - name: Install dependencies
-        run: go mod tidy
+    - name: Install dependencies
+      run: go mod tidy
 
-      - name: Run tests
-        run: go test ./... -v
+    - name: Run tests
+      run: go test ./... -v
 
-      - name: Build binary
-        run: go build -o cowsay-fortune ./main.go
+    - name: Build binary
+      run: go build -o cowsay-fortune ./main.go
 
-      - name: Build Docker image
-        run: docker build -t your-dockerhub-username/cowsay-fortune:latest .
+    - name: Build Docker image
+      run: docker build -t boombop/cowsay-fortune:latest .
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Docker image
-        run: docker push your-dockerhub-username/cowsay-fortune:latest
+    - name: Push Docker image
+      run: docker push boombop/cowsay-fortune:latest
